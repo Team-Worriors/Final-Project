@@ -17,12 +17,6 @@ import time
 import threading
 import pandas as pd
 
-# Make a Dash app!
-app = dash.Dash(__name__)
-
-# ADD this!
-server = app.server
-
 CONTENT_STYLE = {
     "transition": "margin-left .5s",
     "margin-left": "18rem",
@@ -46,6 +40,9 @@ connected = ""
 ibkr_async_conn = ibkr_app()
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+# ADD this!
+server = app.server
 
 app.layout = html.Div(
     [
