@@ -17,6 +17,12 @@ import time
 import threading
 import pandas as pd
 
+# Make a Dash app!
+app = dash.Dash(__name__)
+
+# ADD this!
+server = app.server
+
 CONTENT_STYLE = {
     "transition": "margin-left .5s",
     "margin-left": "18rem",
