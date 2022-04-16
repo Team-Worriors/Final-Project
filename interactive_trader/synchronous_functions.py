@@ -3,6 +3,8 @@ from interactive_trader.ibkr_app import ibkr_app
 import threading
 import time
 from datetime import datetime
+import pandas as pd
+import numpy as np
 
 # If you want different default values, configure it here.
 default_hostname = '127.0.0.1'
@@ -254,3 +256,62 @@ def place_order(contract, order, hostname=default_hostname,
 
     return app.order_status
 
+def enter_trade(n, prices_dataframe, Lambda):
+    #calculate alpha ratio
+    prices_dataframe['alpha'] = prices_dataframe['ko_Close'] / prices_dataframe['pep_Close']
+
+    #calculate z_score
+    def zscore(n):
+        df_mean = prices_dataframe['alpha'].rolling(n, center=False).mean().shift(1)
+        df_std = prices_dataframe['alpha'].rolling(n, center=False).std(ddof=1).shift(1)
+        z_score = (prices_dataframe['alpha'] - df_mean) / df_std
+        return z_score
+    z_score = zscore(n)
+    prices_dataframe['z_score'] = z_score
+
+
+    # determine entry status for Y(ko)
+    conditions = [
+        (prices_dataframe['z_score'] > Lambda),
+        (prices_dataframe['z_score'] <= Lambda) & (prices_dataframe['z_score'] >= -Lambda),
+        (prices_dataframe['z_score'] < -Lambda)
+    ]
+    values = ['sell', 'do not enter', 'buy']
+    prices_dataframe['action_y'] = np.select(conditions, values)
+    prices_dataframe['date'] = prices_dataframe['Date'].shift(-1)
+    prices_dataframe['price_y'] = prices_dataframe['ko_Open'].shift(-1)
+    prices_dataframe['amount_y'] = 100 #####default enter amount is 100
+    prices_dataframe['ticker_y'] = 'ko'
+
+    # determine entry status for X(pep)
+    conditions = [
+        (prices_dataframe['action_y'] == 'sell'),
+        (prices_dataframe['action_y'] == 'do not enter'),
+        (prices_dataframe['action_y'] == 'buy')
+    ]
+    values = ['buy', 'do not enter', 'sell']
+    prices_dataframe['action_x'] = np.select(conditions, values)
+    prices_dataframe['price_x'] = prices_dataframe['pep_Open'].shift(-1)
+    prices_dataframe['amount_x'] = prices_dataframe["price_y"] * prices_dataframe['amount_y'] / prices_dataframe['price_x']
+    prices_dataframe['ticker_x'] = 'pep'
+
+    # create dataframe for Y(ko)
+    df1 = prices_dataframe[['date', 'ticker_y', 'price_y', 'amount_y', 'action_y']]
+    df_y = df1[(df1.action_y != '0') & (df1.action_y != 'do not enter')]
+    df_y.rename(columns={'ticker_y': 'ticker', 'price_y': 'price', 'amount_y': 'quantity', 'action_y': 'action'},
+                inplace=True)
+
+    # create dataframe for X(pep)
+    df2 = prices_dataframe[['date', 'ticker_x', 'price_x', 'amount_x', 'action_x']]
+    df_x = df2[(df2.action_x != '0') & (df2.action_x != 'do not enter')]
+    df_x.rename(columns={'ticker_x': 'ticker', 'price_x': 'price', 'amount_x': 'quantity', 'action_x': 'action'},
+            inplace=True)
+
+    # concat X and Y
+    frames = [df_y, df_x]
+    result = pd.concat(frames)
+    result['trip'] = 'entry'
+    result['status'] = 'FILLED'
+    result['date'] = pd.to_datetime(result['date'])
+    result.sort_values(by='date', inplace=True, ascending=True)
+    return result
