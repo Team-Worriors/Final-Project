@@ -52,12 +52,13 @@ app.layout = html.Div(
         sidebar,
         html.Div(id="page-content", style=CONTENT_STYLE),
         dcc.Interval(
-            id = 'ibkr-update-interval',
+            id='ibkr-update-interval',
             interval=5000,
             n_intervals=0
         )
     ],
 )
+
 
 @app.callback(
     [Output('trade-blotter', 'data'), Output('trade-blotter', 'columns')],
@@ -74,6 +75,7 @@ def update_order_status(n_intervals):
     dt_columns = [{"name": i, "id": i} for i in df.columns]
     return dt_data, dt_columns
 
+
 @app.callback(
     [Output('errors-dt', 'data'), Output('errors-dt', 'columns')],
     Input('ibkr-update-interval', 'n_intervals')
@@ -88,6 +90,7 @@ def update_order_status(n_intervals):
     dt_data = df.to_dict('records')
     dt_columns = [{"name": i, "id": i} for i in df.columns]
     return dt_data, dt_columns
+
 
 @app.callback(
     [
@@ -117,6 +120,7 @@ def toggle_sidebar(n, nclick):
         cur_nclick = 'SHOW'
 
     return sidebar_style, content_style, cur_nclick
+
 
 # this callback uses the current pathname to set the active state of the
 # corresponding nav link to true, allowing users to tell see page they are on
@@ -148,6 +152,7 @@ def render_page_content(pathname):
         ]
     )
 
+
 @app.callback(
     Output('ibkr-async-conn-status', 'children'),
     [
@@ -158,7 +163,6 @@ def render_page_content(pathname):
     ]
 )
 def async_handler(async_status, master_client_id, port, hostname):
-
     if async_status == "CONNECTED":
         raise PreventUpdate
         pass
@@ -199,6 +203,7 @@ def async_handler(async_status, master_client_id, port, hostname):
 
     return str(connected)
 
+
 @app.callback(
     Output('placeholder-div', 'children'),
     [
@@ -214,13 +219,12 @@ def async_handler(async_status, master_client_id, port, hostname):
         Input('order-lmt-price', 'value'),
         Input('order-account', 'value')
     ],
-    prevent_initial_call = True
+    prevent_initial_call=True
 )
 def place_order(n_clicks, contract_symbol, contract_sec_type,
                 contract_currency, contract_exchange,
                 contract_primary_exchange, order_action, order_type,
                 order_size, order_lmt_price, order_account):
-
     # Contract object: STOCK
     contract = Contract()
     contract.symbol = contract_symbol
@@ -251,6 +255,27 @@ def place_order(n_clicks, contract_symbol, contract_sec_type,
     )
 
     return ''
+
+
+@app.callback(
+    [Output('backtest-dt', 'data'),
+     Output('backtest-dt', 'columns')],
+    [Input('run-button', 'n_clicks')],
+    [State('n-rolling', 'value'), State('Lambda', 'value'),
+     State('rho', 'value'), State('loss-limit', 'value'),
+     State('open-days', 'value')],
+)
+def run_backtest(n_clicks, n_rolling, Lambda, rho, loss_limit, open_days):
+    csv_file = "worriors_data_raw.csv"
+    csv_data = pd.read_csv(csv_file, low_memory=False)
+    csv_df = pd.DataFrame(csv_data)
+    del csv_df['Unnamed: 9'], csv_df['Unnamed: 10'], csv_df['Unnamed: 11'], csv_df['Unnamed: 12']
+
+    df = enter_trade(n_rolling, csv_df, Lambda)
+    df_data = df.to_dict('records')
+    df_columns = [{"name": i, "id": i} for i in df.columns]
+    return df_data, df_columns
+
 
 if __name__ == "__main__":
     app.run_server()
