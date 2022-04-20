@@ -52,7 +52,7 @@ page_1 = html.Div(
         html.H5("Enter the value for exit signal Rho:"),
         html.Div(
             children=[
-                dcc.Input(id='rho', type='number', value=0.5, debounce=True)
+                dcc.Input(id='rho', type='number', value=0.02, debounce=True)
             ],
             style={
                 'display': 'inline-block',

@@ -271,7 +271,8 @@ def run_backtest(n_clicks, n_rolling, Lambda, rho, loss_limit, open_days):
     csv_df = pd.DataFrame(csv_data)
     del csv_df['Unnamed: 9'], csv_df['Unnamed: 10'], csv_df['Unnamed: 11'], csv_df['Unnamed: 12']
 
-    df = enter_trade(n_rolling, csv_df, Lambda)
+    entry_df = enter_trade(n_rolling, csv_df, Lambda)
+    df = exit_trade(n_rolling, csv_df, entry_df, rho, loss_limit, open_days)
     df_data = df.to_dict('records')
     df_columns = [{"name": i, "id": i} for i in df.columns]
     return df_data, df_columns
