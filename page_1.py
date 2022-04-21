@@ -23,6 +23,7 @@ page_1 = html.Div(
         html.H1("Section 1: Backtesing"),
 
         # parameter n
+        html.Br(),
         html.H5("Enter the value for rolling window:"),
         html.Div(
             children=[
@@ -36,6 +37,7 @@ page_1 = html.Div(
         html.Br(),
 
         # parameter Lamda
+        html.Br(),
         html.H5("Enter the value for entry signal Lambda:"),
         html.Div(
             children=[
@@ -49,6 +51,7 @@ page_1 = html.Div(
         html.Br(),
 
         # parameter Rho
+        html.Br(),
         html.H5("Enter the value for exit signal Rho:"),
         html.Div(
             children=[
@@ -62,6 +65,7 @@ page_1 = html.Div(
         html.Br(),
 
         # parameter L
+        html.Br(),
         html.H5("Enter the value for loss limit L (%):"),
         html.Div(
             children=[
@@ -75,6 +79,7 @@ page_1 = html.Div(
         html.Br(),
 
         # parameter X
+        html.Br(),
         html.H5("Enter the value for order open days X:"),
         html.Div(
             children=[
@@ -94,7 +99,7 @@ page_1 = html.Div(
 
         html.Br(),
         html.Br(),
-        html.H5("Ledger:"),
+        html.H4("Ledger:"),
         dash_table.DataTable(
             columns=[{"name": i, "id": i} for i in df.columns],
             data=df.to_dict('records'),

@@ -362,10 +362,10 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
     exit_order['date_exit'] = ''
     exit_order['status_exit'] = ''
 
-    for i in range(first_index, last_index):
+    for i in range(first_index, last_index + 1):
         if i in exit_order.index:
             if exit_order['ticker'][i].values[0] == 'ko' and exit_order['action'][i].values[0] == 'buy':
-                for j in range(i + 1, i + X+1):  # x=60
+                for j in range(i + 1, i + X + 1):  # x=60
                     Loss = ((prices_dataframe['ko_Close'][j] - exit_order['price'][i].values[0]) /
                             exit_order['price'][i].values[0]) * 100
                     if Loss > L:  # L=20
@@ -386,7 +386,7 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
             elif exit_order['ticker'][i].values[0] == 'ko' and exit_order['action'][i].values[0] == 'sell':
-                for j in range(i + 1, i + X+1):
+                for j in range(i + 1, i + X + 1):
                     Loss = -((prices_dataframe['ko_Close'][j] - exit_order['price'][i].values[0]) /
                              exit_order['price'][i].values[0]) * 100
                     if Loss > L:  # L=20
@@ -407,7 +407,7 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
             elif exit_order['ticker'][i].values[0] == 'pep' and exit_order['action'][i].values[0] == 'buy':
-                for j in range(i + 1, i + X+1):
+                for j in range(i + 1, i + X + 1):
                     Loss = ((prices_dataframe['pep_Close'][j] - exit_order['price'][i].values[0]) /
                             exit_order['price'][i].values[0]) * 100
                     if Loss > L:  # L=20
@@ -419,7 +419,7 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X+1 > last_index:
+                        if i + X + 1 > last_index:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
@@ -428,7 +428,7 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
             else:
-                for j in range(i + 1, i + X+1):
+                for j in range(i + 1, i + X + 1):
                     Loss = -((prices_dataframe['pep_Close'][j] - exit_order['price'][i].values[0]) /
                              exit_order['price'][i].values[0]) * 100
                     if Loss > L:  # L=20
@@ -440,7 +440,7 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X+1 > last_index:
+                        if i + X + 1 > last_index:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
@@ -465,3 +465,42 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
     result.sort_values(by='date', inplace=True, ascending=True)
     return result
 
+
+def exit_trade_mkt(n, prices_dataframe, exit_trade):
+    # copy exit_trade as template
+    exit_order_mkt = exit_trade.copy(deep=True)
+
+    # select rows where status is TIMEOUT or STOPLOSS
+    exit_order_mkt = exit_order_mkt.loc[exit_order_mkt['status'].isin(['STOPLOSS', 'TIMEOUT'])]
+
+    first_index = exit_order_mkt.first_valid_index()
+    last_index = exit_order_mkt.index[-1]
+
+    exit_order_mkt['price_mkt'] = ''
+    exit_order_mkt['status_mkt'] = 'FILLED'
+
+    for i in range(first_index, last_index + 1):
+        if i in exit_order_mkt.index:
+            if exit_order_mkt['ticker'][i].values[0] == 'ko':
+                exit_order_mkt['price_mkt'][i].values[0] = prices_dataframe['ko_Close'][i + 2]
+                exit_order_mkt['price_mkt'][i].values[1] = prices_dataframe['pep_Close'][i + 2]
+            else:
+                exit_order_mkt['price_mkt'][i].values[0] = prices_dataframe['pep_Close'][i + 2]
+                exit_order_mkt['price_mkt'][i].values[1] = prices_dataframe['ko_Close'][i + 2]
+        else:
+            continue
+
+    # format the dataframe
+    del exit_order_mkt['price'], exit_order_mkt['status']
+    order2 = ['date', 'ticker', 'price_mkt', 'quantity', 'action', 'trip', 'status_mkt']
+    exit_order_mkt = exit_order_mkt[order2]
+    exit_order_mkt.columns = ['date', 'ticker', 'price', 'quantity', 'action', 'trip', 'status']
+    exit_order_mkt['date'] = pd.to_datetime(exit_order_mkt['date'])
+
+
+    # concat X and Y
+    frames = [exit_trade, exit_order_mkt]
+    result = pd.concat(frames)
+    result['date'] = pd.to_datetime(result['date'])
+    result.sort_values(by='date', inplace=True, ascending=True)
+    return result
