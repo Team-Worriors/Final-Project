@@ -325,6 +325,9 @@ def enter_trade(n, prices_dataframe, Lambda):
 def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
     # copy entry_trade 作为exit修改的基础
 
+    first_index = entry_trade.first_valid_index()
+    last_index = entry_trade.index[-1]
+
     exit_order = entry_trade.copy(deep=True)
 
     # 遍历 entry_trade 修改action和trip的状态
