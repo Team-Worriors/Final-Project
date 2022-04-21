@@ -100,11 +100,17 @@ page_1 = html.Div(
         html.Br(),
         html.Br(),
         html.H4("Ledger:"),
-        dash_table.DataTable(
-            columns=[{"name": i, "id": i} for i in df.columns],
-            data=df.to_dict('records'),
-            id='backtest-dt'
-        )
+        html.Div(
+            dcc.Loading(
+                id="loading-1",
+                type="default",
+                children=dash_table.DataTable(
+                    columns=[{"name": i, "id": i} for i in df.columns],
+                    data=df.to_dict('records'),
+                    id='backtest-dt'
+                )
+            )
+        ),
     ],
     id="page-1"
 )
