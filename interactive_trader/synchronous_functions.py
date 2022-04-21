@@ -362,7 +362,7 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
     exit_order['date_exit'] = ''
     exit_order['status_exit'] = ''
 
-    for i in range(83, 1313):
+    for i in range(first_index, last_index):
         if i in exit_order.index:
             if exit_order['ticker'][i].values[0] == 'ko' and exit_order['action'][i].values[0] == 'buy':
                 for j in range(i + 1, i + X+1):  # x=60
@@ -377,7 +377,7 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X+1 > 1312:
+                        if i + X+1 > last_index:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
@@ -398,7 +398,7 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X+1 > 1312:
+                        if i + X+1 > last_index:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
@@ -419,7 +419,7 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X+1 > 1312:
+                        if i + X+1 > last_index:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
@@ -440,7 +440,7 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X+1 > 1312:
+                        if i + X+1 > last_index:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
