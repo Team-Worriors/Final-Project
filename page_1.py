@@ -92,6 +92,7 @@ page_1 = html.Div(
         ),
         html.Br(),
 
+        html.Br(),
         html.H5("Press run to start backtesting:"),
         # Run button
         html.Button('Run', id='run-button', n_clicks=0),
