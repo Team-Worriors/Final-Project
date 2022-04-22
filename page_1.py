@@ -20,7 +20,7 @@ df = pd.DataFrame(
 page_1 = html.Div(
     children=[
         # Section title
-        html.H1("Section 1: Backtesing"),
+        html.H1("Backtesing"),
 
         # parameter n
         html.Br(),
