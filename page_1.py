@@ -44,10 +44,10 @@ page_1 = html.Div(
 
         html.Br(),
         html.P(["Column ‘status’ will show: ", html.Br(),
-               "- ‘FILLED’ if the limit order filled, ", html.Br(),
-               "- ‘TIMEOUT’ if the order stayed open for X days, ", html.Br(),
-               "- ‘OPEN’ if the order stayed open for less than X days, ", html.Br(),
-               "- ‘STOPLOSS’ if the value dipped below your tolerance set by L."]),
+                "- ‘FILLED’ if the limit order filled, ", html.Br(),
+                "- ‘TIMEOUT’ if the order stayed open for X days, ", html.Br(),
+                "- ‘OPEN’ if the order stayed open for less than X days, ", html.Br(),
+                "- ‘STOPLOSS’ if the value dipped below your tolerance set by L."]),
         html.Br(),
 
         # parameter n
