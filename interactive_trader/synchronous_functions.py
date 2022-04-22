@@ -376,15 +376,15 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['status_exit'][i] = 'FILLED'
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
-                else:
-                    if i + X+1 > last_index:
-                        exit_order['status_exit'][i] = 'OPEN'
-                        exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
-                        break
                     else:
-                        exit_order['status_exit'][i] = 'TIMEOUT'
-                        exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
-                        break
+                        if i + X+1 > last_index and j >= i+X+1:
+                            exit_order['status_exit'][i] = 'OPEN'
+                            exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
+                            break
+                        elif i + X+1 <= last_index and j >= i+X+1:
+                            exit_order['status_exit'][i] = 'TIMEOUT'
+                            exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
+                            break
             elif exit_order['ticker'][i].values[0] == 'ko' and exit_order['action'][i].values[0] == 'sell':
                 for j in range(i + 1, i + X + 1):
                     Loss = -((prices_dataframe['ko_Close'][j] - exit_order['price'][i].values[0]) /
@@ -398,11 +398,11 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X+1 > last_index:
+                        if i + X + 1 > last_index and j >= i + X + 1:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
-                        else:
+                        elif i + X + 1 <= last_index and j >= i + X + 1:
                             exit_order['status_exit'][i] = 'TIMEOUT'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
@@ -419,11 +419,11 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X + 1 > last_index:
+                        if i + X + 1 > last_index and j >= i + X + 1:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
-                        else:
+                        elif i + X + 1 <= last_index and j >= i + X + 1:
                             exit_order['status_exit'][i] = 'TIMEOUT'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
@@ -440,11 +440,11 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X + 1 > last_index:
+                        if i + X + 1 > last_index and j >= i + X + 1:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
-                        else:
+                        elif i + X + 1 <= last_index and j >= i + X + 1:
                             exit_order['status_exit'][i] = 'TIMEOUT'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
