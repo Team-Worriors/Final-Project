@@ -20,9 +20,10 @@ df = pd.DataFrame(
 page_1 = html.Div(
     children=[
         # Section title
-        html.H1("Section 1: Backtesing"),
+        html.H1("Backtesing"),
 
         # parameter n
+        html.Br(),
         html.H5("Enter the value for rolling window:"),
         html.Div(
             children=[
@@ -36,6 +37,7 @@ page_1 = html.Div(
         html.Br(),
 
         # parameter Lamda
+        html.Br(),
         html.H5("Enter the value for entry signal Lambda:"),
         html.Div(
             children=[
@@ -49,6 +51,7 @@ page_1 = html.Div(
         html.Br(),
 
         # parameter Rho
+        html.Br(),
         html.H5("Enter the value for exit signal Rho:"),
         html.Div(
             children=[
@@ -62,6 +65,7 @@ page_1 = html.Div(
         html.Br(),
 
         # parameter L
+        html.Br(),
         html.H5("Enter the value for loss limit L (%):"),
         html.Div(
             children=[
@@ -75,6 +79,7 @@ page_1 = html.Div(
         html.Br(),
 
         # parameter X
+        html.Br(),
         html.H5("Enter the value for order open days X:"),
         html.Div(
             children=[
@@ -87,6 +92,7 @@ page_1 = html.Div(
         ),
         html.Br(),
 
+        html.Br(),
         html.H5("Press run to start backtesting:"),
         # Run button
         html.Button('Run', id='run-button', n_clicks=0),
@@ -94,12 +100,18 @@ page_1 = html.Div(
 
         html.Br(),
         html.Br(),
-        html.H5("Ledger:"),
-        dash_table.DataTable(
-            columns=[{"name": i, "id": i} for i in df.columns],
-            data=df.to_dict('records'),
-            id='backtest-dt'
-        )
+        html.H4("Ledger:"),
+        html.Div(
+            dcc.Loading(
+                id="loading-1",
+                type="default",
+                children=dash_table.DataTable(
+                    columns=[{"name": i, "id": i} for i in df.columns],
+                    data=df.to_dict('records'),
+                    id='backtest-dt'
+                )
+            )
+        ),
     ],
     id="page-1"
 )
