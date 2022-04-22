@@ -376,15 +376,15 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['status_exit'][i] = 'FILLED'
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
+                else:
+                    if i + X+1 > last_index:
+                        exit_order['status_exit'][i] = 'OPEN'
+                        exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
+                        break
                     else:
-                        if i + X+1 > last_index:
-                            exit_order['status_exit'][i] = 'OPEN'
-                            exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
-                            break
-                        else:
-                            exit_order['status_exit'][i] = 'TIMEOUT'
-                            exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
-                            break
+                        exit_order['status_exit'][i] = 'TIMEOUT'
+                        exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
+                        break
             elif exit_order['ticker'][i].values[0] == 'ko' and exit_order['action'][i].values[0] == 'sell':
                 for j in range(i + 1, i + X + 1):
                     Loss = -((prices_dataframe['ko_Close'][j] - exit_order['price'][i].values[0]) /
@@ -458,12 +458,13 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
     exit_order.columns = ['date', 'ticker', 'price', 'quantity', 'action', 'trip', 'status']
     exit_order['date'] = pd.to_datetime(exit_order['date'])
 
-    # concat X and Y
-    frames = [exit_order, entry_trade]
-    result = pd.concat(frames)
-    result['date'] = pd.to_datetime(result['date'])
-    result.sort_values(by='date', inplace=True, ascending=True)
-    return result
+    return exit_order
+    # concat entry_order and exit_order
+    # frames = [exit_order, entry_trade]
+    # result = pd.concat(frames)
+    # result['date'] = pd.to_datetime(result['date'])
+    # result.sort_values(by='date', inplace=True, ascending=True)
+    # return result
 
 
 def exit_trade_mkt(n, prices_dataframe, exit_trade):
