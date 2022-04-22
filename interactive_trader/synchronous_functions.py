@@ -377,11 +377,11 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X+1 > last_index and j >= i+X+1:
+                        if i + X+1 > last_index and j >= i+X:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
-                        elif i + X+1 <= last_index and j >= i+X+1:
+                        elif i + X+1 <= last_index and j >= i+X:
                             exit_order['status_exit'][i] = 'TIMEOUT'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
@@ -398,11 +398,11 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X + 1 > last_index and j >= i + X + 1:
+                        if i + X + 1 > last_index and j >= i + X:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
-                        elif i + X + 1 <= last_index and j >= i + X + 1:
+                        elif i + X + 1 <= last_index and j >= i + X:
                             exit_order['status_exit'][i] = 'TIMEOUT'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
@@ -419,11 +419,11 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X + 1 > last_index and j >= i + X + 1:
+                        if i + X + 1 > last_index and j >= i + X:
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
-                        elif i + X + 1 <= last_index and j >= i + X + 1:
+                        elif i + X + 1 <= last_index and j >= i + X:
                             exit_order['status_exit'][i] = 'TIMEOUT'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
@@ -440,11 +440,11 @@ def exit_trade(n, prices_dataframe, entry_trade, rho, L, X):
                         exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                         break
                     else:
-                        if i + X + 1 > last_index and j >= i + X + 1:
+                        if i + X + 1 > last_index and j >= i + X :
                             exit_order['status_exit'][i] = 'OPEN'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
-                        elif i + X + 1 <= last_index and j >= i + X + 1:
+                        elif i + X + 1 <= last_index and j >= i + X:
                             exit_order['status_exit'][i] = 'TIMEOUT'
                             exit_order['date_exit'][i] = prices_dataframe['Date'][j + 1]
                             break
