@@ -478,9 +478,7 @@ def exit_trade_mkt(n, prices_dataframe, exit_trade):
 
     for i in range(first_index, last_index + 1):
         if i in exit_order_mkt.index:
-            if exit_order_mkt['status'][i].values[0] == 'STOPLOSS' or exit_order_mkt['status'][i].values[
-                1] == 'STOPLOSS' or exit_order_mkt['status'][i].values[0] == 'TIMEOUT' or \
-                    exit_order_mkt['status'][i].values[1] == 'TIMEOUT':
+            if exit_order_mkt['status'][i].values[0] == 'TIMEOUT' or exit_order_mkt['status'][i].values[1] == 'TIMEOUT':
                 if exit_order_mkt['ticker'][i].values[0] == 'ko':
                     exit_order_mkt['price_mkt'][i].values[0] = prices_dataframe['ko_Close'][i + 2]
                     exit_order_mkt['price_mkt'][i].values[1] = prices_dataframe['pep_Close'][i + 2]
