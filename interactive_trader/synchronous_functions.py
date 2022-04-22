@@ -470,37 +470,26 @@ def exit_trade_mkt(n, prices_dataframe, exit_trade):
     # copy exit_trade as template
     exit_order_mkt = exit_trade.copy(deep=True)
 
-    # select rows where status is TIMEOUT or STOPLOSS
-    exit_order_mkt = exit_order_mkt.loc[exit_order_mkt['status'].isin(['STOPLOSS', 'TIMEOUT'])]
-
     first_index = exit_order_mkt.first_valid_index()
     last_index = exit_order_mkt.index[-1]
 
-    exit_order_mkt['price_mkt'] = ''
-    exit_order_mkt['status_mkt'] = 'FILLED'
 
     for i in range(first_index, last_index + 1):
         if i in exit_order_mkt.index:
-            if exit_order_mkt['ticker'][i].values[0] == 'ko':
-                exit_order_mkt['price_mkt'][i].values[0] = prices_dataframe['ko_Close'][i + 2]
-                exit_order_mkt['price_mkt'][i].values[1] = prices_dataframe['pep_Close'][i + 2]
+            if exit_order_mkt['status'][i].values[0] == 'STOPLOSS' or exit_order_mkt['status'][i].values[
+                1] == 'STOPLOSS' or exit_order_mkt['status'][i].values[0] == 'TIMEOUT' or \
+                    exit_order_mkt['status'][i].values[1] == 'TIMEOUT':
+                if exit_order_mkt['ticker'][i].values[0] == 'ko':
+                    exit_order_mkt['price'][i].values[0] = prices_dataframe['ko_Close'][i + 2]
+                    exit_order_mkt['price'][i].values[1] = prices_dataframe['pep_Close'][i + 2]
+                else:
+                    exit_order_mkt['price'][i].values[0] = prices_dataframe['pep_Close'][i + 2]
+                    exit_order_mkt['price'][i].values[1] = prices_dataframe['ko_Close'][i + 2]
             else:
-                exit_order_mkt['price_mkt'][i].values[0] = prices_dataframe['pep_Close'][i + 2]
-                exit_order_mkt['price_mkt'][i].values[1] = prices_dataframe['ko_Close'][i + 2]
+                continue
         else:
             continue
 
-    # format the dataframe
-    del exit_order_mkt['price'], exit_order_mkt['status']
-    order2 = ['date', 'ticker', 'price_mkt', 'quantity', 'action', 'trip', 'status_mkt']
-    exit_order_mkt = exit_order_mkt[order2]
-    exit_order_mkt.columns = ['date', 'ticker', 'price', 'quantity', 'action', 'trip', 'status']
     exit_order_mkt['date'] = pd.to_datetime(exit_order_mkt['date'])
-
-
-    # concat X and Y
-    frames = [exit_trade, exit_order_mkt]
-    result = pd.concat(frames)
-    result['date'] = pd.to_datetime(result['date'])
-    result.sort_values(by='date', inplace=True, ascending=True)
-    return result
+    exit_order_mkt.sort_values(by='date', inplace=True, ascending=False)
+    return exit_order_mkt
