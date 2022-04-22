@@ -22,6 +22,34 @@ page_1 = html.Div(
         # Section title
         html.H1("Backtesing"),
 
+        html.Br(),
+        html.P("Pairs Trading is a trading strategy which involves finding "
+               "a pair of stocks that exhibit similar historical price behavior, "
+               "and then betting on the subsequent convergence of their prices "
+               "in the event that they diverge."),
+
+        html.Br(),
+        html.P("Z-score is the normalized price ratio of the pairs. "
+               "In this case, the ratio of the pairs is "
+               "ko’s close price / pep’s close price. "
+               "It is computed using moving averages at each given time "
+               "and tells us whether it's a good idea to enter a position "
+               "at this time. When the Z-score goes above the short threshold, λ, "
+               "we sell ko and buy pep. When the Z-score goes below the long "
+               "threshold, -λ, we buy ko and sell pep."),
+
+        html.Br(),
+        html.P("ρ sets exit threshold level (should be less than λ). "
+               "Limit order will be filled at either entry price*(1+ρ) or entry price*(1-ρ)."),
+
+        html.Br(),
+        html.P(["Column ‘status’ will show: ", html.Br(),
+               "- ‘FILLED’ if the limit order filled, ", html.Br(),
+               "- ‘TIMEOUT’ if the order stayed open for X days, ", html.Br(),
+               "- ‘OPEN’ if the order stayed open for less than X days, ", html.Br(),
+               "- ‘STOPLOSS’ if the value dipped below your tolerance set by L."]),
+        html.Br(),
+
         # parameter n
         html.Br(),
         html.H5("Enter the value for rolling window:"),
