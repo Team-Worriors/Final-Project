@@ -474,6 +474,7 @@ def exit_trade_mkt(n, prices_dataframe, exit_trade):
     first_index = exit_order_mkt.first_valid_index()
     last_index = exit_order_mkt.index[-1]
 
+    exit_order_mkt['price_mkt'] = exit_order_mkt['price']
 
     for i in range(first_index, last_index + 1):
         if i in exit_order_mkt.index:
@@ -481,16 +482,23 @@ def exit_trade_mkt(n, prices_dataframe, exit_trade):
                 1] == 'STOPLOSS' or exit_order_mkt['status'][i].values[0] == 'TIMEOUT' or \
                     exit_order_mkt['status'][i].values[1] == 'TIMEOUT':
                 if exit_order_mkt['ticker'][i].values[0] == 'ko':
-                    exit_order_mkt['price'][i].values[0] = prices_dataframe['ko_Close'][i + 2]
-                    exit_order_mkt['price'][i].values[1] = prices_dataframe['pep_Close'][i + 2]
+                    exit_order_mkt['price_mkt'][i].values[0] = prices_dataframe['ko_Close'][i + 2]
+                    exit_order_mkt['price_mkt'][i].values[1] = prices_dataframe['pep_Close'][i + 2]
                 else:
-                    exit_order_mkt['price'][i].values[0] = prices_dataframe['pep_Close'][i + 2]
-                    exit_order_mkt['price'][i].values[1] = prices_dataframe['ko_Close'][i + 2]
+                    exit_order_mkt['price_mkt'][i].values[0] = prices_dataframe['pep_Close'][i + 2]
+                    exit_order_mkt['price_mkt'][i].values[1] = prices_dataframe['ko_Close'][i + 2]
             else:
-                continue
+                exit_order_mkt['price_mkt'][i].values[0] = exit_order_mkt['price'][i].values[0]
+                exit_order_mkt['price_mkt'][i].values[1] = exit_order_mkt['price'][i].values[1]
         else:
             continue
 
+
+    # format the dataframe
+    del exit_order_mkt['price']
+    order2 = ['date', 'ticker', 'price_mkt', 'quantity', 'action', 'trip', 'status']
+    exit_order_mkt = exit_order_mkt[order2]
+    exit_order_mkt.columns = ['date', 'ticker', 'price', 'quantity', 'action', 'trip', 'status']
     exit_order_mkt['date'] = pd.to_datetime(exit_order_mkt['date'])
-    exit_order_mkt.sort_values(by='date', inplace=True, ascending=False)
+    # exit_order_mkt.sort_values(by='date', inplace=True, ascending=False)
     return exit_order_mkt

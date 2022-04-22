@@ -273,7 +273,11 @@ def run_backtest(n_clicks, n_rolling, Lambda, rho, loss_limit, open_days):
 
     entry_df = enter_trade(n_rolling, csv_df, Lambda)
     exit_df = exit_trade(n_rolling, csv_df, entry_df, rho, loss_limit, open_days)
-    df = exit_trade_mkt(n_rolling, csv_df, exit_df)
+    exit_mkt_df = exit_trade_mkt(n_rolling, csv_df, exit_df)
+    frames = [entry_df, exit_mkt_df]
+    df = pd.concat(frames)
+    df['date'] = pd.to_datetime(df['date'])
+    df.sort_values(by='date', inplace=True, ascending=False)
     df_data = df.to_dict('records')
     df_columns = [{"name": i, "id": i} for i in df.columns]
     return df_data, df_columns
